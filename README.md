@@ -40,15 +40,15 @@ python img2svg
 python img2svg -f filename -r reg_strength -c contour_color -s stroke_width -o out_size -p output_path
 ```
 With
-- -f file : relative path to file wrt svgwrite.py
+- -f file : path to image
 - -r reg_strength : how much simplification to do. Default = 1.0
-- -c contour_color : color of the contour, if any. Default = '' (no contour). Exemple : 'r'
-- -s stroke_width : width of the contour (only if contour_color != ''). Default = 2.0 (thick)
-- -o out_size : determine othe size of the largest side of the image. Default = 500
-- -p output_path : output path. Default = replace the image extension by `svg`
+- -c contour_color : color of the contour, if any. Default = \'\' (no contour). Exemple : \'red\'
+- -s stroke_width : width of the contour (only if contour_color != \'\'). Default = 2.0 (thick)
+- -o out_size : size of the largest side of the image. Default = 500
+- -p output_path : output path. Default = replace the image extension by \`svg\`
 
 
 ## Coming soon
 
-Bezier curves support
+Bezier curves support.
 
