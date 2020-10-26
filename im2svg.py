@@ -55,12 +55,18 @@ def main():
   
   parser.add_argument('-f', '--file', default='lola.jpeg', required=False, help='Input file name')
   parser.add_argument('-r', '--reg', default=1.0, type=float, help='Regularization strength')
+  parser.add_argument('-s', '--smooth', default=0.0, type=float, help='Smoothong term. 0 (default) = polygonal, >0 cubic Bezier curves')
   parser.add_argument('-c', '--contour', default='', help='Color of contour, default = none')
-  parser.add_argument('-s', '--stroke', default=2, help='Width of contours')
+  parser.add_argument('-w', '--width', default=2, help='Width of contours')
   parser.add_argument('-o', '--out_size',  type=float, default=500, help='Size of svg outputfile')
   parser.add_argument('-p', '--out_path',  default='', help='Path of svg outputfile default = empty : inputfile.svg ')
+  parser.add_argument('-a', '--apply',  default='', help='Function to apply before partition: sqrt, log,')
+  parser.add_argument('-t', '--tolerance',  default=1.0, type=float, help= 'how far are lines allowed to deviate from the borders')
   
   args = parser.parse_args()
+
+  if args.out_path[-4:] != '.svg':
+    args.out_path = args.out_path + '.svg'
   
   try:
     args.out_size = [float(args.out_size), float(args.out_size)]
@@ -77,7 +83,7 @@ def main():
     if img.max()>1:
       img = img / 255.0
   elif  file_extension == '.npy':
-    img = np.load(args.file).astype('f4')
+    img = np.load(args.file).astype('f4')[:,:,0]
   elif file_extension in '.tif.tiff':
     from PIL import Image
     img = np.array(Image.open(args.file)).astype('f4')
@@ -88,6 +94,12 @@ def main():
     raise NotImplementedError('unknown file extension %s' % file_extension)
     
   img = np.asfortranarray(img)
+
+  if 'log' in args.apply:
+    img = np.log(np.maximum(img,0)+1e-4)
+    print(img.shape)
+  elif 'sqrt' in args.apply:
+    img = np.sqrt(np.maximum(img,0))
     
   args.lin = img.shape[0]
   args.col = img.shape[1]
@@ -108,9 +120,14 @@ def main():
   reg_strength = args.reg * np.std(img)**2
   comp, rX, dump = cp_kmpp_d0_dist(1, img.reshape((args.n_ver,args.n_chan)).T , first_edge, adj_vertices, edge_weights = reg_strength * edg_weights, cp_it_max=10, cp_dif_tol = 5e-1) 
   print('cp done')
+
+  if 'log' in args.apply:
+    rX = np.exp(rX)
+  if 'sqrt' in args.apply:
+    rX = rX ** 2
   
   #potrace
-  polygons = multilabel_potrace_shp(comp.reshape([args.lin, args.col]).astype('uint16'))
+  polygons = multilabel_potrace_shp(comp.reshape([args.lin, args.col]).astype('uint16'), args.tolerance)
   print('potrace done')
 
   #format output
