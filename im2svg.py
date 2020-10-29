@@ -45,7 +45,8 @@ def write_svg(polygons, rX, filename, args):
       color = "rgb(%d,%d,%d)" % (tochar(rX[0,i_poly]), tochar(rX[1,i_poly]), tochar(rX[2,i_poly]))
     else:
       color = "rgb(%d,%d,%d)" % (tochar(np.random.rand()), tochar(np.random.rand()), tochar(np.random.rand()))
-    path = dwg.path(s, stroke_width=args.stroke, stroke=color if args.contour == '' else args.contour)
+
+    path = dwg.path(s, stroke_width=args.width, stroke=color if args.contour == '' else args.contour)
     path.fill(color)
     dwg.add(path)
   dwg.save()
