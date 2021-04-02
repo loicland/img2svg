@@ -78,7 +78,7 @@ except FileNotFoundError:
 ### ============ MULTILABEL POTRACE ============  ###
 
 os.chdir('../../multilabel-potrace/python')
-name = "multilabel_potrace_shp"
+name = "multilabel_potrace_svg"
 include_dirs = [numpy.get_include(), # find the Numpy headers
                 "../include", "../include/potrace"]
 
@@ -89,7 +89,7 @@ if not os.path.exists("build"):
     os.mkdir("build")
 
 # remove previously compiled lib
-purge("bin/", "multilabel_potrace_shp")
+purge("bin/", "multilabel_potrace_svg")
 
 ###  compilation  ###
 
@@ -109,9 +109,9 @@ for o in C_sources:
 mod = Extension(
         name,
         # list source files
-        ["../src/multilabel_potrace_shp.cpp",
+        ["../src/multilabel_potrace_svg.cpp",
          "../src/multilabel_potrace.cpp",
-         "./cpython/multilabel_potrace_shp_cpy.cpp"],
+         "./cpython/multilabel_potrace_svg_cpy.cpp"],
         include_dirs=include_dirs,
         extra_objects=extra_objects,
         extra_compile_args=extra_compile_args,
