@@ -19,9 +19,9 @@ Otherwise, clone the following repo in the root:
 
 ## 2. Requirement
 
-You need `numpy`, `matplotlib` and `svgwrite`:
+You need `numpy`, `matplotlib`
 ```
-pip install numpy matplotlib svgwrite
+pip install numpy matplotlib
 ```
 
 ## 3. Installation
@@ -32,7 +32,7 @@ python setup.py build_ext
 ```
 Test with
 ```
-python img2svg
+python im2svg.py
 ```
 ## 4. Usage
 
