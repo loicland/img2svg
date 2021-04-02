@@ -1,6 +1,6 @@
 [submodule "parallel-cut-pursuit"]
 	path = parallel-cut-pursuit
-	url = hhttps://gitlab.com/1a7r0ch3/parallel-cut-pursuit
+	url = https://gitlab.com/1a7r0ch3/parallel-cut-pursuit
 [submodule "multilabel-potrace"]
 	path = multilabel-potrace
 	url = https://gitlab.com/1a7r0ch3/multilabel-potrace
