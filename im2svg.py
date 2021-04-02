@@ -43,13 +43,13 @@ def main():
     parser.add_argument('-o', '--out_size', type=float, default=500, help='Size of svg outputfile')
     #cosmetic
     parser.add_argument('-lc', '--line_color', default='', help='Color of contour, default = none. supported (r,g,b,k,w), or a char triplet')
-    parser.add_argument('-lw', '--line_width', default=1,
+    parser.add_argument('-lw', '--line_width', default=1, type=int,
                         help='Width of contour in pixels. Default: 1')
     # optimization parameters
     parser.add_argument('-a', '--apply', default='',
                         help='Function to apply before partition: sqrt, log,none (default)')
     parser.add_argument('-r', '--reg', default=1.0, type=float,
-                        help='Regularization strength: the higher the lfewer components. Default = 1.0.')
+                        help='Regularization strength: the higher the fewer components. Default = 1.0.')
     parser.add_argument('-s', '--smooth', default=1.0, type=float,
                         help='Smoothing term. 0  = polygonal, >0 cubic Bezier curves. Default = 1.0')
     parser.add_argument('-lt', '--line_tolerance', default=1.0, type=float,
@@ -92,9 +92,10 @@ def main():
     img = np.asfortranarray(img)
 
     if 'log' in args.apply:
+        print("Log mapping")
         img = np.log(np.maximum(img, 0) + 1e-4)
-        print(img.shape)
     elif 'sqrt' in args.apply:
+        print("Square root mapping")
         img = np.sqrt(np.maximum(img, 0))
 
     args.lin = img.shape[0]
@@ -115,18 +116,13 @@ def main():
     # cut pursuit
     reg_strength = args.reg * np.std(img) ** 2
     comp, rX, dump = cp_kmpp_d0_dist(1, img.reshape((args.n_ver, args.n_chan)).T, first_edge, adj_vertices,
-                                     edge_weights=reg_strength * edg_weights, cp_it_max=10, cp_dif_tol=1e-1)
-    print('cp done')
+                                     edge_weights=reg_strength * edg_weights, cp_it_max=10, cp_dif_tol = 1e-2)
+    print('Partition done')
 
     if 'log' in args.apply:
         rX = np.exp(rX)
     if 'sqrt' in args.apply:
         rX = rX ** 2
-
-    # potrace
-    # polygons = multilabel_potrace_shp(comp.reshape([args.lin, args.col]).astype('uint16'), args.tolerance)
-
-    print('potrace done')
 
     # format output
     output_path = args.out_path if len(args.out_path) > 0 else filename + '.svg'
@@ -143,9 +139,6 @@ def main():
     multilabel_potrace_svg(np.resize(comp, (args.lin, args.col)), output_path, straight_line_tol=args.line_tolerance, \
                            smoothing=args.smooth, curve_fusion_tol=args.curve_tolerance, \
                            comp_colors=(255 * rX).astype('uint8'), line_color=line_color, line_width=args.line_width)
-
-    # write_svg(polygons, rX, output_path, args)
-
-
+    print('Vectorization done')
 if __name__ == "__main__":
     main()
