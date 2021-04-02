@@ -13,9 +13,9 @@ Use the recursive submodule option to clone the necessary submodules.
 git clone --recurse-submodules https://github.com/loicland/img2svg
 ```
 Otherwise, clone the following repo in the root:
-- https://gitlab.com/loicland/grid-grap
-- https://gitlab.com/loicland/parallel-cut-pursuit
-- https://gitlab.com/loicland/multilabel-potrace
+- https://gitlab.com/1a7r0ch3/parallel-cut-pursuit
+- https://gitlab.com/1a7r0ch3/multilabel-potrace
+- https://gitlab.com/1a7r0ch3/grid-graph
 
 ## 2. Requirement
 
