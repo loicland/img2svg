@@ -32,7 +32,7 @@ python setup.py build_ext
 ```
 Test with
 ```
-python im2svg.py
+python img2svg.py
 ```
 ## 4. Usage
 

@@ -20,7 +20,6 @@ from multilabel_potrace_svg import multilabel_potrace_svg
 def tostr(f):
     return "%5.1f" % f
 
-
 def tochar(f):
     return int(255 * f)
 
@@ -33,7 +32,6 @@ def char2col(c):
         "w": [255, 255, 255]
     }
     return np.array(switcher.get(c)).astype('uint8')
-
 
 def main():
     parser = argparse.ArgumentParser(description='IMG TO VECTOR')
@@ -67,8 +65,6 @@ def main():
     except ValueError:
         args.out_size = ast.literal_eval(args.out_size)
 
-
-
     # input raster
     filename, file_extension = os.path.splitext(args.file)
     if file_extension in '.png.jpg.jpeg':
@@ -89,8 +85,6 @@ def main():
     else:
         raise NotImplementedError('unknown file extension %s' % file_extension)
 
-    img = np.asfortranarray(img)
-
     if 'log' in args.apply:
         print("Log mapping")
         img = np.log(np.maximum(img, 0) + 1e-4)
@@ -100,24 +94,27 @@ def main():
 
     args.lin = img.shape[0]
     args.col = img.shape[1]
-    max_side = max(args.lin, args.col)
-    args.scale_x, args.scale_y = args.out_size[1] / max_side, args.out_size[0] / max_side
     args.n_chan = img.shape[-1] if len(img.shape) > 2 else 1
     args.n_ver = args.lin * args.col
     print('Reading image of size %d by %d with %d channels' % (args.lin, args.col, args.n_chan))
 
-    # compute grid
+    # compute grid graph
     shape = np.array([args.lin, args.col], dtype='uint32')
-    first_edge, adj_vertices, connectivities = grid_to_graph(shape, 2, True, True, True)
+    first_edge, adj_vertices, connectivities = grid_to_graph(shape, 2,
+        compute_connectivities=True)
     # edge weights
     edg_weights = np.ones(connectivities.shape, dtype=img.dtype)
     edg_weights[connectivities == 2] = 1 / np.sqrt(2)
 
     # cut pursuit
     reg_strength = args.reg * np.std(img) ** 2
-    comp, rX, dump = cp_kmpp_d0_dist(1, img.reshape((args.n_ver, args.n_chan)).T, first_edge, adj_vertices,
-                                     edge_weights=reg_strength * edg_weights, cp_it_max=10, cp_dif_tol = 1e-2)
-    print('Partition done')
+
+    comp, rX, dump = cp_kmpp_d0_dist(1,
+        img.reshape((args.n_ver, args.n_chan)).T, first_edge, adj_vertices,
+        edge_weights=reg_strength * edg_weights, cp_it_max=10,
+        cp_dif_tol=1e-2, max_num_threads=0, balance_parallel_split=True)
+
+    print('Partition done.')
 
     if 'log' in args.apply:
         rX = np.exp(rX)
@@ -125,20 +122,27 @@ def main():
         rX = rX ** 2
 
     # format output
-    output_path = args.out_path if len(args.out_path) > 0 else filename + '.svg'
+    output_path = args.out_path if len(args.out_path) > 0 \
+                                else filename + '.svg'
     if len(args.line_color) == 0:
         line_color = None
     elif len(args.line_color) == 1:
         line_color = char2col(args.line_color)
     else:
         try:
-            line_color = np.array(ast.literal_eval(args.line_color)).astype('uint8')
+            line_color = np.array(ast.literal_eval(args.line_color)) \
+                .astype('uint8')
         except SyntaxError:
-            print("line_color should be either empty, r,g,b,k,w or a char triplet.")
+            print("line_color should be either empty, r,g,b,k,w or a char" \
+                " triplet.")
 
-    multilabel_potrace_svg(np.resize(comp, (args.lin, args.col)), output_path, straight_line_tol=args.line_tolerance, \
-                           smoothing=args.smooth, curve_fusion_tol=args.curve_tolerance, \
-                           comp_colors=(255 * rX).astype('uint8'), line_color=line_color, line_width=args.line_width)
-    print('Vectorization done')
+    multilabel_potrace_svg(np.resize(comp, (args.lin, args.col)), output_path,
+        straight_line_tol=args.line_tolerance, smoothing=args.smooth,
+        curve_fusion_tol=args.curve_tolerance,
+        comp_colors=(255 * rX).astype('uint8'), line_color=line_color,
+        line_width=args.line_width)
+
+    print('Vectorization done.')
+
 if __name__ == "__main__":
     main()
