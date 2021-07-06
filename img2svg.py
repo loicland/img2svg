@@ -16,7 +16,6 @@ from grid_graph import grid_to_graph, edge_list_to_forward_star
 from cp_kmpp_d0_dist import cp_kmpp_d0_dist
 from multilabel_potrace_svg import multilabel_potrace_svg
 
-
 def tostr(f):
     return "%5.1f" % f
 
@@ -110,7 +109,7 @@ def main():
     reg_strength = args.reg * np.std(img) ** 2
 
     comp, rX, dump = cp_kmpp_d0_dist(1,
-        img.reshape((args.n_ver, args.n_chan)).T, first_edge, adj_vertices,
+        np.asfortranarray(img.reshape((args.n_ver, args.n_chan)).T), first_edge, adj_vertices,
         edge_weights=reg_strength * edg_weights, cp_it_max=10,
         cp_dif_tol=1e-2, max_num_threads=0, balance_parallel_split=True)
 
