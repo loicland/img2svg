@@ -1,6 +1,6 @@
 # img2svg
 
-Approximates images in svg format.
+Approximates images in svg format. Now supports Bezier curves!
 
 |      input image           |      output svg (polygonal)|
 | -------------------------- | -------------------------- |
@@ -40,15 +40,14 @@ python img2svg.py
 python img2svg -f filename -r reg_strength -c contour_color -s stroke_width -o out_size -p output_path
 ```
 With
-- -f file : path to image
-- -r reg_strength : how much simplification to do. Default = 1.0
-- -c contour_color : color of the contour, if any. Default = \'\' (no contour). Exemple : \'red\'
-- -s stroke_width : width of the contour (only if contour_color != \'\'). Default = 2.0 (thick)
-- -o out_size : size of the largest side of the image. Default = 500
-- -p output_path : output path. Default = replace the image extension by \`svg\`
-
-
-## Coming soon
-
-Bezier curves support.
+- -f --file: path to image
+- -r --reg_strength : how much simplification to do. Default = 1.0
+- -c --contour_color: color of the contour, if any. Default = \'\' (no contour). Exemple : \'red\'
+- -s --stroke_width: width of the contour (only if contour_color != \'\'). Default = 2.0 (thick)
+- -o --out_size: size of the largest side of the image. Default = 500
+- -p --output_path: output path. Default = replace the image extension by \`svg\`
+- -a --apply: Function to apply before partition: sqrt, log, none (default)
+- -s --smooth: Smoothing term. 0  = polygonal, >0 cubic Bezier curves. Default = 1.0
+- -lt --line_tolerance: How far are lines allowed to deviate from the borders. Default = 1.0
+- -ct --curve_tolerance: max difference area ratio diff between original and simplified polygons. Default=0.2
 
