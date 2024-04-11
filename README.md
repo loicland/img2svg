@@ -42,8 +42,8 @@ python img2svg -f filename -r reg_strength -c contour_color -s stroke_width -o o
 With
 - -f --file: path to image
 - -r --reg_strength : how much simplification to do. Default = 1.0
-- -c --contour_color: color of the contour, if any. Default = \'\' (no contour). Exemple : \'red\'
-- -s --stroke_width: width of the contour (only if contour_color != \'\'). Default = 2.0 (thick)
+- -lc --line_color: color of the contour, if any. Default = \'\' (no contour). Exemple : \'red\'
+- -lw --line_width: width of the contour (only if contour_color != \'\'). Default = 2.0 (thick)
 - -o --out_size: size of the largest side of the image. Default = 500
 - -p --output_path: output path. Default = replace the image extension by \`svg\`
 - -a --apply: Function to apply before partition: sqrt, log, none (default)
