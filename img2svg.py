@@ -70,7 +70,7 @@ def main():
         img = mpimg.imread(args.file).astype('f4')
         if file_extension == '.png':
             img = img[:, :, :3]
-        print(img.max())
+
         if img.max() > 1:
             img = img / 255.0
     elif file_extension == '.npy':
@@ -111,7 +111,7 @@ def main():
     comp, rX, dump = cp_kmpp_d0_dist(1,
         np.asfortranarray(img.reshape((args.n_ver, args.n_chan)).T), first_edge, adj_vertices,
         edge_weights=reg_strength * edg_weights, cp_it_max=10,
-        cp_dif_tol=1e-2, max_num_threads=0, balance_parallel_split=True)
+        cp_dif_tol=1e-2, max_num_threads=0, balance_parallel_split=args.n_ver>20000)
 
     print('Partition done.')
 
